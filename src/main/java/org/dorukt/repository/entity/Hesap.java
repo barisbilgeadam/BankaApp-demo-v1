@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "tblhesap")
 public class Hesap {
+    /*
+    Küçük bir güncelleme...
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
