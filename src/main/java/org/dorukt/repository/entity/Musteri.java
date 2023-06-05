@@ -21,10 +21,20 @@ public class Musteri {
     String soyad;
     String username;
     String password;
+
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "musteri")
     List<Hesap> hesaplar;
-    @ManyToOne
+
+
+    @ManyToOne()
     Banka banka;
-    @OneToOne(cascade = CascadeType.ALL)
-    Adres adres;
+
+    /*
+    Fetch Type:
+    FetchType.EAGER: Aceleci. Bağlı olduğu ne var ne yok toplayıp getirir.
+    FetchType.LAZY :  Sadece gerekli nesneyi döner. Bağlı olduklarını dönmez.
+     */
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    List<Adres> adresList;
 }

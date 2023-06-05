@@ -4,13 +4,20 @@ import org.dorukt.controller.AdresController;
 import org.dorukt.controller.BankaController;
 import org.dorukt.controller.HesapConroller;
 import org.dorukt.controller.MusteriController;
+import org.dorukt.repository.MusteriRepository;
 import org.dorukt.repository.entity.Adres;
 import org.dorukt.repository.entity.Banka;
 import org.dorukt.repository.entity.Hesap;
 import org.dorukt.repository.entity.Musteri;
 import org.dorukt.repository.enums.EHesapTipi;
+import org.dorukt.service.AdresService;
+import org.dorukt.service.HesapService;
+import org.dorukt.service.MusteriService;
 
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,14 +34,203 @@ public class Uygulama {
     Hesap hesap;
 
     public static void main(String[] args) {
-        Uygulama uyg1 = new Uygulama();
+        AdresService adresService=new AdresService();
+        MusteriService musteriService=new MusteriService();
+        HesapService hesapService=new HesapService();
+
+
+
+        Adres a1= Adres.builder().sehir("Adana").build();
+        Adres a2= Adres.builder().sehir("Erzurum").build();
+
+        Musteri m1= Musteri.builder().ad("Engin").adresList(List.of(a1,a2)).build();
+        Musteri m2= Musteri.builder().ad("Atamert").adresList(List.of(a1,a2)).build();
+
+        musteriService.save(m1);
+        musteriService.save(m2);
+
+
+
+        System.out.println("--------Müşteriler-------------");
+        musteriService.findAll().forEach(x->{
+            System.out.print(x.getAd());
+            for (Adres adres:x.getAdresList()) {
+                System.out.print(" "+adres.getSehir());
+            }
+            System.out.println();
+        });
+        //Adresler hangi müşteriye ait onu görebilir miyiz?
+        //@OneToOne(mappedBy = "adres") eklendikten sonra görebiliriz.
+        System.out.println("--------Adresler-------------");
+        adresService.findAll().forEach(x->{
+            System.out.print(x.getSehir());
+            for (Musteri musteri1:x.getMusteriList()) {
+                System.out.print(" "+musteri1.getAd());
+            }
+            System.out.println();
+        });
+
+
+       // Entity - Nesne(a1)
+      /*  Hesap h1= Hesap.builder().bakiye(50L).hesapTipi(EHesapTipi.TL).build();
+        Hesap h2= Hesap.builder().bakiye(150L).hesapTipi(EHesapTipi.DOLAR).build();
+
+        List<Hesap> liste=new ArrayList<>();
+        liste.add(h1);
+        liste.add(h2);*/
+        //hesapService.saveAll(liste);
+        /*Musteri m1= Musteri.builder().ad("Engin").hesaplar(liste).build();
+        h1.setMusteri(m1);
+        h2.setMusteri(m1);
+        musteriService.save(m1);*/
+
+        //Musteriye bağlı hesaplardan birini silme:
+    /*    Musteri m2= musteriService.findById(1).get();
+        Hesap hesap1=m2.getHesaplar().get(0);
+
+        hesapService.delete(hesap1);*/
+        //id'si 1 olan müşteriye yeni bir hesap ekleme:
+        /*Hesap hesap2= Hesap.builder().hesapTipi(EHesapTipi.EURO).bakiye(25000L).build();
+        hesap2.setMusteri(musteriService.findById(1).get());
+        hesapService.save(hesap2);*/
+
+        //id'si 1 olan müsterinin hesabındaki para kadar hesabına para ekleyelim.
+      /*  Hesap hesap1=musteriService.findById(1).get().getHesaplar().get(0);
+        hesap1.setBakiye(50000L);
+        hesapService.update(hesap1);*/
+
+        //olan müşteriye diğer hesaplardan da tanımlama:
+      /*   Musteri musteri1=musteriService.findById(1).get();
+       Hesap hesap2= Hesap.builder().hesapTipi(EHesapTipi.TL).bakiye(50000L).musteri(musteri1).build();
+        Hesap hesap3= Hesap.builder().hesapTipi(EHesapTipi.DOLAR).bakiye(30000L).musteri(musteri1).build();
+
+        List<Hesap> hesapList=new ArrayList<>();
+        hesapList.add(hesap2);
+        hesapList.add(hesap3);
+        musteri1.setHesaplar(hesapList);
+
+        musteriService.update(musteri1);*/
+
+        //Bir müşterinin tüm hesaplarını silelim:
+      /*  Musteri musteri1=musteriService.findById(1).get();
+        List<Hesap> liste=musteri1.getHesaplar();
+        for (Hesap hesap:liste ) {
+
+            hesapService.delete(hesap);
+        }
+*/
+
+        // Illegal attempt to associate a collection with two open sessions.
+
+    /*    Musteri m1 = musteriService.findById(1).get();
+        List<Hesap> hesaplar = m1.getHesaplar();
+
+        hesaplar.add(Hesap.builder().hesapTipi(EHesapTipi.EURO).musteri(m1).bakiye(1000l).build());
+
+        musteriService.update(m1);*/
+
+
+
+        /*m1.getHesaplar().add();
+        musteriService.update(m1);*/
+
+
+      /*  System.out.println("---------MUSTERİLER-------------");
+        // musteri ile beraber hesap bilgileri de gelir.
+        musteriService.findAll().forEach(x->{
+            System.out.print(x.getId()+" "+x.getAd()+" ");
+            for (Hesap h:x.getHesaplar() ) {
+                System.out.print(h.getBakiye()+" "+h.getHesapTipi());
+            }
+            System.out.println();
+        });
+
+        System.out.println("---------HESAPLAR-------------");*/
+        //bu hesabın sahibi kim?
+       /* hesapService.findAll().forEach(x->{
+            System.out.println(x.getBakiye()+" "+x.getHesapTipi()+" "+x.getMusteri().getAd());
+        });*/
+
+
+
+
+
+
+      /*//  @OneToOne(cascade = CascadeType.ALL) ifadesi eklendikten sonra kaldırdık
+        adresService.save(a1);
+        Musteri m1= Musteri.builder().ad("Engin").build();
+
+        Adres a1= Adres.builder().ulke("Tr").sehir("Ankara").musteri(m1).build();
+
+        Adres a2= Adres.builder().ulke("Tr").sehir("Antalya").musteri(m1).build();
+
+
+        adresService.save(a1);
+
+        @JoinColumn(unique = true) bu ifade ile adres tablosunda aynı musteriden 2 defa bulunamayacak.
+
+        //adresService.save(a2);
+      //  musteriService.save(m1);
+
+
+        @OneToOne(cascade = CascadeType.ALL) ifadesi sayesinde
+        müşteri silinirken ona ait olan adres de silinir.
+        musteriService.deleteById(1);
+        //Musterileri adresleriyle gösterebiliyor.
+        System.out.println("--------Müşteriler-------------");
+        musteriService.findAll().forEach(x->{
+            System.out.println(x.getAd()+" "+x.getAdres().getUlke()+" "+x.getAdres().getSehir());
+        });
+        //Adresler hangi müşteriye ait onu görebilir miyiz?
+        //@OneToOne(mappedBy = "adres") eklendikten sonra görebiliriz.
+        System.out.println("--------Adresler-------------");
+        adresService.findAll().forEach(x->{
+            System.out.println(x.getUlke()+" "+x.getSehir()+" "+x.getMusteri().getAd());
+        });*/
+
+
+
+      /*  Uygulama uyg1 = new Uygulama();
         uyg1.defaultData();
         do {
             uyg1.menu();
         } while (uyg1.musteri == null);
 
-        uyg1.hosgeldin();
+        uyg1.hosgeldin();*/
+     /*   hesaplar();
+        musteriler();
+        hesaplar();*/
+
     }
+
+    private static void hesaplar() {
+        HesapConroller hesapConroller1=new HesapConroller();
+      //  hesapConroller1.deleteById(2);
+        System.out.println("hesaplar...");
+        System.out.println( hesapConroller1.findAll().size());
+        hesapConroller1.findAll().forEach(x->{
+            System.out.println(x);
+           // System.out.println(x.getMusteri());
+        });
+    }
+    private static void musteriler() {
+        MusteriController musteriController1=new MusteriController();
+        HesapConroller hesapConroller1=new HesapConroller();
+//        musteriController1.deleteById(1);
+        Musteri hesabiSilinecekMusteri= musteriController1.findById(4).get();
+        List<Hesap> hesapList=hesabiSilinecekMusteri.getHesaplar();
+        hesapConroller1.delete(hesapList.get(0));
+        hesapList.remove(hesapList.get(0));
+
+        musteriController1.update(hesabiSilinecekMusteri);
+
+        System.out.println("musteirler...");
+        System.out.println( musteriController1.findAll().size());
+        musteriController1.findAll().forEach(x->{
+            System.out.println(x);
+        });
+    }
+
 
     private void hesaplariGoster() {
         for (Hesap hesap1 : musteri.getHesaplar()) {
@@ -42,7 +238,7 @@ public class Uygulama {
         }
     }
 
-    public void defaultData() {
+   /* public void defaultData() {
 
         Banka bank1 = Banka.builder().ad("Halkbank").build();
         Banka bank2 = Banka.builder().ad("ING").build();
@@ -75,9 +271,9 @@ public class Uygulama {
         musteriController.save(musteri2);
         musteriController.save(musteri3);
         musteriController.save(musteri4);
-    }
+    }*/
 
-    private void hosgeldin() {
+   /* private void hosgeldin() {
         int secim = 0;
         System.out.println("Hoşgeldin! " + musteri.getAd() + "\n");
 
@@ -115,9 +311,9 @@ public class Uygulama {
 
             }
         } while (secim != 0);
-    }
+    }*/
 
-    private void yeniHesapAc() {
+   /* private void yeniHesapAc() {
         System.out.println("Hesabın türünü seçin:");
         for (EHesapTipi value : EHesapTipi.values()) {
             System.out.println((value.ordinal() + 1) + " - " + value.name());
@@ -130,7 +326,7 @@ public class Uygulama {
         musteri.getHesaplar().add(hesap);
         musteriController.update(musteri);
 
-    }
+    }*/
 
     private void hesapIslemleri() {
         int secim = 0;
@@ -173,7 +369,7 @@ public class Uygulama {
         } while (secim != 0);
     }
 
-    public int menu() {
+   /* public int menu() {
         int secim = 0;
         System.out.println("Hoşgeldin lütfen yapılacak işlemi seç:");
         System.out.println("1- Yeni Müşteri Oluştur.");
@@ -234,7 +430,7 @@ public class Uygulama {
                 System.out.println("Hatalı giriş.");
         }
         return secim;
-    }
+    }*/
 
 
 }

@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -65,10 +66,11 @@ public class MyFactoryRepository<T, ID> implements ICrud<T, ID> {
     @Override
     public <S extends T> S update(S entity) {
         try {
+//JPA nedir? Hibernate nedir?
             entityManager.getTransaction().begin();
             entityManager.merge(entity); // Güncelleme için merge iş görüyor. Kaydetmek için persist.
             entityManager.getTransaction().commit();
-            /*openSession();
+          /*  openSession();
             session.update(entity);
             closeSession();*/
             return entity;
@@ -156,6 +158,7 @@ public class MyFactoryRepository<T, ID> implements ICrud<T, ID> {
     }
     @Override
     public List<T> findAll() {
+        entityManager.clear(); //flush cache belleği temizlemek için kullanılır.
         CriteriaQuery<T> criteria = (CriteriaQuery<T>) criteriaBuilder.createQuery(t.getClass());
         Root<T> root = (Root<T>) criteria.from(t.getClass());
         criteria.select(root);

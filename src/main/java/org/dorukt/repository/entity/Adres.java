@@ -3,6 +3,7 @@ package org.dorukt.repository.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder // bir sınıftan nesne türetmeyi sağlar.
 @Data // get set metodlarını otomatik tanımlar.
@@ -17,7 +18,7 @@ public class Adres {
     String ulke;
     String sehir;
 
-    @ToString.Exclude
-    @OneToOne(mappedBy = "adres")
-    Musteri musteri;
+    @ManyToMany(mappedBy = "adresList")
+    List<Musteri> musteriList;
+
 }

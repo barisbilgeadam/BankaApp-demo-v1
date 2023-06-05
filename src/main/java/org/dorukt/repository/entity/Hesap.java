@@ -25,8 +25,13 @@ public class Hesap {
     EHesapTipi hesapTipi;
     @Builder.Default
     LocalDate acilmaTarihi=LocalDate.now();
+    /*    @ManyToOne()
+       @JoinColumn(name="musteriid", nullable=false,referencedColumnName = "musteriid")
+      @ToString.Exclude
+
+*/
     @ManyToOne()
-    @JoinColumn(name="musteriid", nullable=false,referencedColumnName = "musteriid")
-    @ToString.Exclude
     Musteri musteri;
+
+
 }
